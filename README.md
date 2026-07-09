@@ -8,7 +8,7 @@ The system helps users store doctor meeting details, track previous interactions
 
 ## Project Preview
 
-![AI CRM Dashboard](./screenshots/dashboard.png)
+![AI CRM Dashboard](./screenshots/dashboard.png.png)
 
 ---
 
