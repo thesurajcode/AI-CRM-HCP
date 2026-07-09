@@ -5,8 +5,8 @@ from "../components/InteractionForm";
 import ChatBox 
 from "../components/ChatBox";
 
-
-
+import InteractionList 
+from "../components/InteractionList";
 function Dashboard(){
 
 
@@ -33,6 +33,7 @@ AI CRM HCP Dashboard
 </div>
 
 
+
 <div className="bg-white p-6 rounded-xl shadow">
 
 <ChatBox/>
@@ -40,15 +41,17 @@ AI CRM HCP Dashboard
 </div>
 
 
-
 </div>
 
 
+
+<InteractionList/>
+
+
 </div>
+
 
 );
-
-
 }
 
 

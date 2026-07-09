@@ -1,39 +1,51 @@
-import {useState} from "react";
+import { useState } from "react";
 
-import {useDispatch,useSelector} from "react-redux";
+import {
+  useDispatch,
+  useSelector
+} from "react-redux";
 
 import api from "../api/axios";
 
-import {addMessage} 
-from "../redux/slices/chatSlice";
+import {
+  addMessage
+} from "../redux/slices/chatSlice";
 
 
 
 function ChatBox(){
 
 
-const [text,setText]=useState("");
+const [text,setText] = useState("");
+
+const [loading,setLoading] = useState(false);
 
 
-const dispatch=useDispatch();
+const dispatch = useDispatch();
 
 
 const messages = useSelector(
 
-state=>state.chat.messages
+state => state.chat.messages
 
 );
 
 
 
-const sendMessage=async()=>{
+const sendMessage = async()=>{
+
+
+if(!text.trim()){
+  return;
+}
+
 
 
 dispatch(
 
 addMessage({
 
-role:"user",
+role:"You",
 
 text:text
 
@@ -43,14 +55,18 @@ text:text
 
 
 
+try{
+
+
+setLoading(true);
+
+
 const res = await api.post(
 
 "/agent/chat",
 
 {
-
 message:text
-
 }
 
 );
@@ -61,7 +77,7 @@ dispatch(
 
 addMessage({
 
-role:"ai",
+role:"AI",
 
 text:res.data.response
 
@@ -70,15 +86,45 @@ text:res.data.response
 );
 
 
-
 setText("");
+
+
+}
+
+
+catch(error){
+
+
+dispatch(
+
+addMessage({
+
+role:"Error",
+
+text:"AI service unavailable"
+
+})
+
+);
+
+
+}
+
+
+finally{
+
+setLoading(false);
+
+}
+
 
 };
 
 
 
 
-return (
+return(
+
 
 <div>
 
@@ -91,40 +137,61 @@ AI Assistant 🤖
 
 
 
-<div className="h-60 overflow-auto border rounded p-3 mb-4">
+<div className="h-60 overflow-auto border rounded p-4 mb-3">
 
 
 {
 
-messages.map((m,i)=>(
+
+messages.map((msg,index)=>(
 
 
-<p 
-key={i}
-className="mb-2"
+<div 
+key={index}
+className="mb-3"
 >
 
 
 <b>
 
-{m.role}:
+{msg.role}:
 
 </b>
 
+
 {" "}
 
-{m.text}
+
+{msg.text}
 
 
-</p>
+
+</div>
 
 
 ))
 
+
 }
 
 
+
+{
+
+loading &&
+
+<p>
+
+🤖 AI is thinking...
+
+</p>
+
+}
+
+
+
 </div>
+
 
 
 
@@ -133,15 +200,13 @@ className="mb-2"
 
 <input
 
-className="border flex-1 p-3 rounded"
+className="border rounded p-3 flex-1"
 
 value={text}
 
-onChange={(e)=>
+placeholder="Ask AI..."
 
-setText(e.target.value)
-
-}
+onChange={(e)=>setText(e.target.value)}
 
 />
 
@@ -149,13 +214,23 @@ setText(e.target.value)
 
 <button
 
+disabled={loading}
+
 className="bg-green-600 text-white px-5 rounded"
 
 onClick={sendMessage}
 
 >
 
-Send
+
+{
+loading
+?
+"Wait..."
+:
+"Send"
+}
+
 
 </button>
 
@@ -164,8 +239,15 @@ Send
 </div>
 
 
+
 </div>
 
+
 );
+
+
 }
+
+
+
 export default ChatBox;
